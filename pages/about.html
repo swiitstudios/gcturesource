@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About & Credits - GCTU Resource</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* About page only */
+    .about-hero { padding: 44px 0 36px; }
+    .about-hero h1 { font-size: 2.4rem; }
+    .about-wrap { max-width: 760px; margin: 0 auto; padding: 10px 20px 40px; }
+    .about-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-top: 20px;
+    }
+    .about-card h2 { color: var(--navy); font-size: 1.25rem; margin-bottom: 8px; }
+    .about-card p { color: var(--text); margin-bottom: 10px; }
+    .about-card p:last-child { margin-bottom: 0; }
+    .about-card a.link { color: var(--blue); font-weight: 600; }
+    .about-card a.link:hover { text-decoration: underline; }
+    .creator { display: flex; align-items: center; gap: 16px; }
+    .avatar {
+      width: 64px; height: 64px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 1.4rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .creator h3 { color: var(--navy); font-size: 1.15rem; }
+    .creator p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .credit-list { list-style: none; }
+    .credit-list li { padding: 8px 0; border-bottom: 1px solid #e6eaf3; font-size: 0.95rem; }
+    .credit-list li:last-child { border-bottom: none; }
+    .credit-list span { color: var(--muted); }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .btn-link { display: inline-block; }
+    @media (max-width: 640px) { .about-hero h1 { font-size: 1.8rem; } }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h7M8 11h7"/></svg>
+        </span>
+        GCTU Resource
+      </a>
+
+      <nav class="nav" id="nav">
+        <a href="index.html#departments">Departments</a>
+        <a href="index.html#resources">Past Questions</a>
+        <a href="about.html">About</a>
+        <a class="btn" href="index.html#resources">Browse</a>
+      </nav>
+
+      <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero about-hero">
+    <div class="container">
+      <h1>About GCTU Resource</h1>
+      <p>Built by a GCTU student, for GCTU students.</p>
+    </div>
+  </section>
+
+  <main class="about-wrap">
+
+    <section class="about-card">
+      <h2>Why this exists</h2>
+      <p>
+        Finding lecture slides at GCTU means chasing lecturers and seniors, and scrolling through
+        WhatsApp groups full of PDFs just to find one lesson note. GCTU Resource puts slides,
+        past questions and study materials in one place, from Level 100 to Level 400.
+      </p>
+      <p>The goal is simple: spend less time hunting, more time studying.</p>
+    </section>
+
+    <section class="about-card">
+      <h2>Created by</h2>
+      <div class="creator">
+        <div class="avatar">EK</div>
+        <div>
+          <h3>Emmanuel Kpewu</h3>
+          <p>Founder, <a class="link" href="https://sweetstudios.dev" target="_blank" rel="noopener">Sweet Studios</a></p>
+        </div>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-link" href="https://sweetstudios.dev" target="_blank" rel="noopener">Visit Sweet Studios</a>
+      </div>
+    </section>
+
+    <section class="about-card">
+      <h2>Credits</h2>
+      <ul class="credit-list">
+        <li><strong>Design &amp; development:</strong> <span>Emmanuel Kpewu (Sweet Studios)</span></li>
+        <li><strong>Font:</strong> <span>Poppins, via Google Fonts</span></li>
+        <li><strong>Built with:</strong> <span>HTML, CSS and JavaScript</span></li>
+        <!-- Add contributors here as people upload materials -->
+      </ul>
+    </section>
+
+    <section class="about-card">
+      <h2>Contribute &amp; contact</h2>
+      <p>
+        Have slides or past questions to share? Contributions help every student who comes after you.
+        Found a wrong or missing file, or want something removed? Let us know.
+      </p>
+      <!-- TODO: replace with your real email or WhatsApp link -->
+      <p><a class="link" href="mailto:hello@gcturesource.com">hello@gcturesource.com</a></p>
+    </section>
+
+    <section class="about-card">
+      <h2>Disclaimer</h2>
+      <p>
+        GCTU Resource is an independent student project and is not officially affiliated with
+        Ghana Communication Technology University. All materials are shared for educational use.
+        Copyright remains with the original authors and lecturers.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    Made by <a href="https://sweetstudios.dev" target="_blank" rel="noopener" style="text-decoration: underline;">Sweet Studios</a>
+    • © 2026 gcturesource.com • All resources are for educational use
+  </footer>
+
+</body>
+</html>
