@@ -95,6 +95,27 @@ function render() {
   document.querySelectorAll('.dept-card').forEach(card => {
     card.classList.toggle('active', card.dataset.dept === selectedDept);
   });
+
+  // ===== Update Department Card Counts Dynamically =====
+  const deptCounts = {};
+  allResources.forEach(r => {
+    const dName = r.departments?.name;
+    if (dName) {
+      deptCounts[dName] = (deptCounts[dName] || 0) + 1;
+    }
+  });
+
+  document.querySelectorAll('.dept-card').forEach(card => {
+    const deptName = card.dataset.dept;
+    const count = deptCounts[deptName] || 0;
+    const pTag = card.querySelector('p');
+
+    if (count > 0) {
+      pTag.textContent = `${count} resource${count === 1 ? '' : 's'} • L100-L400`;
+    } else {
+      pTag.textContent = 'Coming soon • L100-L400';
+    }
+  });
 }
 
 // ===== Filters =====
@@ -110,13 +131,21 @@ function clearFilter() {
   render();
 }
 
-// ===== Download (no login needed) =====
-function download(id) {
+// ===== Download (increments count & opens file) =====
+async function download(id) {
   const r = allResources.find(item => item.id === id);
   if (!r.file_path) {
     showToast('This file has not been uploaded yet.');
     return;
   }
+
+  // 1. Increment download count securely via Supabase RPC
+  const { error } = await db.rpc('increment_downloads', { resource_id: Number(id) });
+  if (error) {
+    console.error('Could not update download count:', error);
+  }
+
+  // 2. Fetch the public URL and open it
   const result = db.storage.from('resources').getPublicUrl(r.file_path);
   window.open(result.data.publicUrl, '_blank');
 }
