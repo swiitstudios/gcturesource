@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="shortcut icon" href="logo.png" type="image/x-icon">
 </head>
+
 <body>
 
   <!-- Header -->
@@ -15,7 +17,11 @@
     <div class="container header-inner">
       <a href="#" class="logo" onclick="clearFilter()">
         <span class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h7M8 11h7"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" />
+            <path d="M8 7h7M8 11h7" />
+          </svg>
         </span>
         GCTU Resource
       </a>
@@ -28,7 +34,9 @@
       </nav>
 
       <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
       </button>
     </div>
   </header>
@@ -40,7 +48,10 @@
       <p>All GCTU lecture slides, videos and past questions in one place. From L100 to L400, all departments.</p>
 
       <div class="search-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </svg>
         <input type="text" id="search-input" oninput="render()" placeholder="Search course code e.g. COE 101">
         <button class="btn" onclick="render()">Search</button>
       </div>
@@ -55,25 +66,41 @@
       <div class="dept-grid">
 
         <button class="dept-card" data-dept="Software Engineering" onclick="filterByDept('Software Engineering')">
-          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 5l-4 14"/></svg></div>
+          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 5l-4 14" />
+            </svg></div>
           <h3>Software Engineering</h3>
           <p>2+ resources • L100-L400</p>
         </button>
 
         <button class="dept-card" data-dept="Computer Science" onclick="filterByDept('Computer Science')">
-          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="11" rx="1"/><path d="M2 19h20"/></svg></div>
+          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="11" rx="1" />
+              <path d="M2 19h20" />
+            </svg></div>
           <h3>Computer Science</h3>
           <p>Coming soon • L100-L400</p>
         </button>
 
         <button class="dept-card" data-dept="IT" onclick="filterByDept('IT')">
-          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/><path d="M7 6.5h.01M7 17.5h.01"/></svg></div>
+          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="7" rx="1" />
+              <rect x="3" y="14" width="18" height="7" rx="1" />
+              <path d="M7 6.5h.01M7 17.5h.01" />
+            </svg></div>
           <h3>IT</h3>
           <p>Coming soon • L100-L400</p>
         </button>
 
         <button class="dept-card" data-dept="Cyber Security" onclick="filterByDept('Cyber Security')">
-          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><rect x="9" y="10" width="6" height="5" rx="1"/></svg></div>
+          <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
+              <rect x="9" y="10" width="6" height="5" rx="1" />
+            </svg></div>
           <h3>Cyber Security</h3>
           <p>Coming soon • L100-L400</p>
         </button>
@@ -94,7 +121,8 @@
   </main>
 
   <footer class="site-footer">
-    Made by <a href="about.html" style="text-decoration: underline;">Sweet Studios</a> • © 2026 gcturesource.com • All resources are for educational use
+    Made by <a href="about.html" style="text-decoration: underline;">Sweet Studios</a> • © 2026 gcturesource.com • All
+    resources are for educational use
   </footer>
 
   <!-- Upload modal -->
@@ -139,6 +167,51 @@
     </form>
   </div>
 
+  <!-- Login modal -->
+  <div class="modal" id="login-modal">
+    <div class="modal-box">
+      <h2>Sign in to upload</h2>
+      <p class="modal-note">Downloading is always free, no login needed. We only ask you to sign in before uploading, to
+        keep the site clean.</p>
+      <button class="google-btn" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 48 48">
+          <path fill="#EA4335"
+            d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z" />
+          <path fill="#4285F4"
+            d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z" />
+          <path fill="#FBBC05"
+            d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.100 0 24s.9 7.600 2.600 10.800l7.900-6.100z" />
+          <path fill="#34A853"
+            d="M24 48c6.5 0 11.900-2.100 15.900-5.800l-7.500-5.800c-2.100 1.400-4.800 2.300-8.400 2.300-6.300 0-11.600-4.100-13.500-9.800l-7.900 6.100C6.500 42.600 14.600 48 24 48z" />
+        </svg>
+        Continue with Google
+      </button>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light" onclick="closeLogin()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile modal (shown once, first time a student uploads) -->
+  <div class="modal" id="profile-modal">
+    <form class="modal-box" onsubmit="handleProfile(event)">
+      <h2>One quick step</h2>
+      <p class="modal-note">Tell us who you are. Your index number is private: it is never shown on the site and is only
+        used to know who uploaded a file.</p>
+
+      <label for="pf-name">Full name</label>
+      <input type="text" id="pf-name" required placeholder="e.g. Emmanuel Kpewu">
+
+      <label for="pf-index">Index number</label>
+      <input type="text" id="pf-index" required inputmode="numeric" pattern="[0-9]{6,12}" placeholder="e.g. 2627400000">
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light" onclick="closeProfile()">Cancel</button>
+        <button type="submit" class="btn">Save and continue</button>
+      </div>
+    </form>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <!-- Supabase library, then your keys, then the app -->
@@ -146,4 +219,5 @@
   <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>

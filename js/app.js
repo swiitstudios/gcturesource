@@ -2,9 +2,10 @@
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== State =====
-let allResources = [];     // approved resources from the database
-let departments = [];   // [{id, name}]
+let allResources = [];    // approved resources from the database
+let departments = [];     // [{id, name}]
 let selectedDept = 'ALL';
+let currentProfile = null; // the logged-in student's profile (name + index number)
 
 // ===== Elements =====
 const grid = document.getElementById('resource-grid');
@@ -12,7 +13,6 @@ const emptyMsg = document.getElementById('empty');
 const searchInput = document.getElementById('search-input');
 const clearBtn = document.getElementById('clear-filter');
 const nav = document.getElementById('nav');
-const modal = document.getElementById('upload-modal');
 const toast = document.getElementById('toast');
 
 // ===== Helpers =====
@@ -21,6 +21,9 @@ function esc(text) {
   div.textContent = text == null ? '' : text;
   return div.innerHTML;
 }
+
+function show(id) { document.getElementById(id).classList.add('open'); }
+function hide(id) { document.getElementById(id).classList.remove('open'); }
 
 function formatSize(bytes) {
   if (!bytes) return 'size unknown';
@@ -107,7 +110,7 @@ function clearFilter() {
   render();
 }
 
-// ===== Download =====
+// ===== Download (no login needed) =====
 function download(id) {
   const r = allResources.find(item => item.id === id);
   if (!r.file_path) {
@@ -118,14 +121,106 @@ function download(id) {
   window.open(result.data.publicUrl, '_blank');
 }
 
-// ===== Upload =====
-function openModal() {
-  modal.classList.add('open');
-  nav.classList.remove('open');
+// ===== Login =====
+async function signInWithGoogle() {
+  sessionStorage.setItem('afterLogin', 'upload');
+  const { error } = await db.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + window.location.pathname }
+  });
+  if (error) {
+    console.error(error);
+    showToast('Could not start Google sign-in.');
+  }
 }
 
-function closeModal() {
-  modal.classList.remove('open');
+async function signOut() {
+  await db.auth.signOut();
+  currentProfile = null;
+  showToast('Signed out.');
+}
+
+function closeLogin() { hide('login-modal'); }
+function closeProfile() { hide('profile-modal'); }
+
+// Show a "Sign out" link in the menu only when logged in
+function updateAuthUI(session) {
+  let link = document.getElementById('signout-link');
+  if (session && !link) {
+    link = document.createElement('a');
+    link.id = 'signout-link';
+    link.href = '#';
+    link.textContent = 'Sign out';
+    link.onclick = function (e) { e.preventDefault(); signOut(); };
+    nav.appendChild(link);
+  } else if (!session && link) {
+    link.remove();
+  }
+}
+
+// ===== Upload flow: login -> profile -> upload form =====
+async function openModal() {
+  nav.classList.remove('open');
+
+  const { data } = await db.auth.getSession();
+  const session = data.session;
+
+  // 1. Not logged in -> ask to sign in
+  if (!session) {
+    show('login-modal');
+    return;
+  }
+
+  // 2. Logged in but no profile yet -> ask for name + index number
+  if (!currentProfile) {
+    const res = await db.from('profiles')
+      .select('full_name, index_number')
+      .eq('id', session.user.id)
+      .maybeSingle();
+    currentProfile = res.data;
+  }
+
+  if (!currentProfile) {
+    const meta = session.user.user_metadata || {};
+    document.getElementById('pf-name').value = meta.full_name || meta.name || '';
+    show('profile-modal');
+    return;
+  }
+
+  // 3. Ready -> show the upload form
+  show('upload-modal');
+}
+
+function closeModal() { hide('upload-modal'); }
+
+async function handleProfile(event) {
+  event.preventDefault();
+  const name = document.getElementById('pf-name').value.trim();
+  const index = document.getElementById('pf-index').value.trim();
+
+  if (!/^[0-9]{6,12}$/.test(index)) {
+    showToast('Index number should be 6 to 12 digits.');
+    return;
+  }
+
+  const { data } = await db.auth.getSession();
+  if (!data.session) { closeProfile(); show('login-modal'); return; }
+
+  const res = await db.from('profiles').upsert({
+    id: data.session.user.id,
+    full_name: name,
+    index_number: index
+  });
+
+  if (res.error) {
+    console.error(res.error);
+    showToast('Could not save your details. Try again.');
+    return;
+  }
+
+  currentProfile = { full_name: name, index_number: index };
+  closeProfile();
+  show('upload-modal');
 }
 
 async function handleUpload(event) {
@@ -144,19 +239,19 @@ async function handleUpload(event) {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Uploading...';
 
-  // 1. Upload the file to storage (random-ish safe file name)
+  // 1. Upload the file to storage
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
   const filePath = Date.now() + '-' + safeName;
   const up = await db.storage.from('resources').upload(filePath, file, { contentType: 'application/pdf' });
 
   if (up.error) {
     console.error(up.error);
-    showToast('Upload failed. Try again.');
+    showToast('Upload failed. Are you signed in? Try again.');
     resetSubmit(submitBtn);
     return;
   }
 
-  // 2. Save the details (starts as NOT approved)
+  // 2. Save the details (starts as NOT approved; uploader_id is set by the database)
   const ins = await db.from('resources').insert({
     department_id: dept.id,
     course_code: document.getElementById('up-code').value.trim(),
@@ -164,7 +259,7 @@ async function handleUpload(event) {
     level: document.getElementById('up-level').value,
     file_path: filePath,
     file_size: file.size,
-    uploader_name: document.getElementById('up-name').value.trim() || null,
+    uploader_name: currentProfile ? currentProfile.full_name : null,
     approved: false
   });
 
@@ -172,7 +267,8 @@ async function handleUpload(event) {
 
   if (ins.error) {
     console.error(ins.error);
-    showToast('Could not save details. Try again.');
+    const limit = ins.error.message && ins.error.message.includes('limit');
+    showToast(limit ? 'Upload limit reached (10 per day).' : 'Could not save details. Try again.');
     return;
   }
 
@@ -199,4 +295,20 @@ function showToast(message) {
 }
 
 // ===== Start =====
-loadData();
+db.auth.onAuthStateChange(function (event, session) {
+  updateAuthUI(session);
+});
+
+async function init() {
+  loadData();
+  const { data } = await db.auth.getSession();
+  updateAuthUI(data.session);
+
+  // Came back from Google? Continue to the upload flow.
+  if (data.session && sessionStorage.getItem('afterLogin') === 'upload') {
+    sessionStorage.removeItem('afterLogin');
+    openModal();
+  }
+}
+
+init();
