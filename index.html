@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GCTU Resource</title>
+  <title>GCTU Resource - Stop Hunting For Slides</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
@@ -56,25 +56,25 @@
         <button class="dept-card" data-dept="Software Engineering" onclick="filterByDept('Software Engineering')">
           <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 5l-4 14"/></svg></div>
           <h3>Software Engineering</h3>
-          <p>40+ resources • L100-L400</p>
+          <p>2+ resources • L100-L400</p>
         </button>
 
         <button class="dept-card" data-dept="Computer Science" onclick="filterByDept('Computer Science')">
           <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="11" rx="1"/><path d="M2 19h20"/></svg></div>
           <h3>Computer Science</h3>
-          <p>52+ resources • L100-L400</p>
+          <p>Coming soon • L100-L400</p>
         </button>
 
         <button class="dept-card" data-dept="IT" onclick="filterByDept('IT')">
           <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/><path d="M7 6.5h.01M7 17.5h.01"/></svg></div>
           <h3>IT</h3>
-          <p>35+ resources • L100-L400</p>
+          <p>Coming soon • L100-L400</p>
         </button>
 
         <button class="dept-card" data-dept="Cyber Security" onclick="filterByDept('Cyber Security')">
           <div class="dept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><rect x="9" y="10" width="6" height="5" rx="1"/></svg></div>
           <h3>Cyber Security</h3>
-          <p>28+ resources • L100-L400</p>
+          <p>Coming soon • L100-L400</p>
         </button>
 
       </div>
@@ -93,13 +93,16 @@
   </main>
 
   <footer class="site-footer">
-    Made by Sweet Studios • © 2026 gcturesource.com • All resources are for educational use
+    Made by <a href="about.html" style="text-decoration: underline;">Sweet Studios</a> • © 2026 gcturesource.com • All resources are for educational use
   </footer>
 
   <!-- Upload modal -->
   <div class="modal" id="upload-modal">
     <form class="modal-box" onsubmit="handleUpload(event)">
       <h2>Upload Resource</h2>
+
+      <label for="up-file">PDF file (max 25MB)</label>
+      <input type="file" id="up-file" accept="application/pdf" required>
 
       <label for="up-code">Course code</label>
       <input type="text" id="up-code" required placeholder="e.g. COE 201">
@@ -123,6 +126,11 @@
         <option>400</option>
       </select>
 
+      <label for="up-name">Your name (optional)</label>
+      <input type="text" id="up-name" placeholder="For credits">
+
+      <p class="resource-meta" style="margin-top:10px">Uploads are reviewed before they appear on the site.</p>
+
       <div class="modal-actions">
         <button type="button" class="btn btn-light" onclick="closeModal()">Cancel</button>
         <button type="submit" class="btn">Submit</button>
@@ -132,8 +140,9 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- data.js first (placeholder data), then app.js -->
-  <script src="js/data.js"></script>
+  <!-- Supabase library, then your keys, then the app -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
