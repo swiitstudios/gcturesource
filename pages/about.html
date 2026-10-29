@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About & Credits - GCTU Resource</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/css/style.css">
+
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
   <style>
     /* About page only */
-    .about-hero { padding: 44px 0 36px; }
-    .about-hero h1 { font-size: 2.4rem; }
-    .about-wrap { max-width: 760px; margin: 0 auto; padding: 10px 20px 40px; }
+    .about-hero {
+      padding: 44px 0 36px;
+    }
+
+    .about-hero h1 {
+      font-size: 2.4rem;
+    }
+
+    .about-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 10px 20px 40px;
+    }
+
     .about-card {
       background: var(--white);
       border-radius: var(--radius);
@@ -18,32 +32,99 @@
       padding: 24px;
       margin-top: 20px;
     }
-    .about-card h2 { color: var(--navy); font-size: 1.25rem; margin-bottom: 8px; }
-    .about-card p { color: var(--text); margin-bottom: 10px; }
-    .about-card p:last-child { margin-bottom: 0; }
-    .about-card a.link { color: var(--blue); font-weight: 600; }
-    .about-card a.link:hover { text-decoration: underline; }
-    .creator { display: flex; align-items: center; gap: 16px; }
+
+    .about-card h2 {
+      color: var(--navy);
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .about-card p {
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .about-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .about-card a.link {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .about-card a.link:hover {
+      text-decoration: underline;
+    }
+
+    .creator {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
     .avatar {
-      width: 64px; height: 64px;
+      width: 64px;
+      height: 64px;
       flex-shrink: 0;
       border-radius: 50%;
       background: var(--blue);
       color: var(--white);
-      font-size: 1.4rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .creator h3 { color: var(--navy); font-size: 1.15rem; }
-    .creator p { margin: 0; color: var(--muted); font-size: 0.9rem; }
-    .credit-list { list-style: none; }
-    .credit-list li { padding: 8px 0; border-bottom: 1px solid #e6eaf3; font-size: 0.95rem; }
-    .credit-list li:last-child { border-bottom: none; }
-    .credit-list span { color: var(--muted); }
-    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-    .btn-link { display: inline-block; }
-    @media (max-width: 640px) { .about-hero h1 { font-size: 1.8rem; } }
+
+    .creator h3 {
+      color: var(--navy);
+      font-size: 1.15rem;
+    }
+
+    .creator p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .credit-list {
+      list-style: none;
+    }
+
+    .credit-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #e6eaf3;
+      font-size: 0.95rem;
+    }
+
+    .credit-list li:last-child {
+      border-bottom: none;
+    }
+
+    .credit-list span {
+      color: var(--muted);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .btn-link {
+      display: inline-block;
+    }
+
+    @media (max-width: 640px) {
+      .about-hero h1 {
+        font-size: 1.8rem;
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <!-- Header -->
@@ -51,20 +132,26 @@
     <div class="container header-inner">
       <a href="/index.html" class="logo">
         <span class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h7M8 11h7"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" />
+            <path d="M8 7h7M8 11h7" />
+          </svg>
         </span>
         GCTU Resource
       </a>
 
       <nav class="nav" id="nav">
-        <a href="index.html#departments">Departments</a>
-        <a href="index.html#resources">Past Questions</a>
+        <a href="/index.html#departments">Departments</a>
+        <a href="/index.html#resources">Past Questions</a>
         <a href="about.html">About</a>
-        <a class="btn" href="index.html#resources">Browse</a>
+        <a class="btn" href="/index.html#resources">Browse</a>
       </nav>
 
       <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')" aria-label="Menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
       </button>
     </div>
   </header>
@@ -95,7 +182,8 @@
         <div class="avatar">EK</div>
         <div>
           <h3>Emmanuel Kpewu</h3>
-          <p>Founder, <a class="link" href="https://sweetstudios.dev" target="_blank" rel="noopener">Sweet Studios</a></p>
+          <p>Founder, <a class="link" href="https://sweetstudios.dev" target="_blank" rel="noopener">Sweet Studios</a>
+          </p>
         </div>
       </div>
       <div class="btn-row">
@@ -132,12 +220,30 @@
       </p>
     </section>
 
+    <section class="about-card" id="privacy">
+      <h2>Privacy</h2>
+      <p><strong>Downloading needs no account.</strong> You only sign in (with Google) if you want to upload.</p>
+      <p><strong>What we store when you upload:</strong> your Google account email, the full name and index number you
+        enter, and the files and course details you upload.</p>
+      <p><strong>Why:</strong> to keep spam and junk out, to know who shared what, and to review uploads before they
+        appear.</p>
+      <p><strong>Who can see it:</strong> your name and index number are never shown on the site. Only the site owner
+        can see upload details. We do not sell your data or share it with advertisers.</p>
+      <p><strong>Your data lives with:</strong> our database and file storage provider (Supabase) and Google, which
+        handles sign-in.</p>
+      <p><strong>Removal:</strong> to delete your account data, or to have a file taken down, email
+        <a class="link" href="mailto:hello@gcturesource.com">hello@gcturesource.com</a>.
+      </p>
+    </section>
+
   </main>
 
   <footer class="site-footer">
-    Made by <a href="https://sweetstudios.dev" target="_blank" rel="noopener" style="text-decoration: underline;">Sweet Studios</a>
+    Made by <a href="https://sweetstudios.dev" target="_blank" rel="noopener" style="text-decoration: underline;">Sweet
+      Studios</a>
     • © 2026 gcturesource.com • All resources are for educational use
   </footer>
 
 </body>
+
 </html>

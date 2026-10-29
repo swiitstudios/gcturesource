@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin - GCTU Resource</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+    <style>
+        :root {
+            --navy: #0b1f6b;
+            --blue: #0b4fc4;
+            --blue-dark: #083a94;
+            --bg: #eceef3;
+            --text: #1c2540;
+            --muted: #5b6785;
+            --red: #c62828;
+            --green: #1b8a3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        header {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        header h1 {
+            font-size: 1.15rem;
+            color: var(--navy);
+        }
+
+        main {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 16px;
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        .btn {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .btn:hover {
+            background: var(--blue-dark);
+        }
+
+        .btn-light {
+            background: #e7edf8;
+            color: var(--navy);
+        }
+
+        .btn-green {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-red {
+            background: var(--red);
+            color: #fff;
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: default;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tabs button {
+            background: #fff;
+            color: var(--muted);
+        }
+
+        .tabs button.active {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 10px rgba(11, 31, 107, .1);
+        }
+
+        .card h3 {
+            color: var(--navy);
+            font-size: 1.02rem;
+        }
+
+        .meta {
+            color: var(--muted);
+            font-size: .82rem;
+            margin: 4px 0 12px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .actions a {
+            text-decoration: none;
+            display: inline-block;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: .9rem;
+            background: #e7edf8;
+            color: var(--navy);
+        }
+
+        .center {
+            text-align: center;
+            padding: 40px 10px;
+            color: var(--muted);
+        }
+
+        .center h2 {
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--navy);
+            color: #fff;
+            padding: 11px 18px;
+            border-radius: 10px;
+            font-size: .9rem;
+            opacity: 0;
+            transition: opacity .3s;
+            pointer-events: none;
+        }
+
+        #toast.show {
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>GCTU Resource · Admin</h1>
+        <div>
+            <a href="../index.html" style="color:var(--blue);font-size:.85rem;margin-right:10px">View site</a>
+            <button class="btn-light hidden" id="signout" onclick="signOut()">Sign out</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Not signed in -->
+        <div class="center hidden" id="view-login">
+            <h2>Admin sign in</h2>
+            <p style="margin-bottom:16px">Sign in with the Google account you made admin.</p>
+            <button class="btn" onclick="signIn()">Continue with Google</button>
+        </div>
+
+        <!-- Signed in but not an admin -->
+        <div class="center hidden" id="view-denied">
+            <h2>Not authorised</h2>
+            <p>This account is not an admin.</p>
+        </div>
+
+        <!-- Admin dashboard -->
+        <div class="hidden" id="view-admin">
+            <div class="tabs">
+                <button id="tab-pending" class="active" onclick="setTab('pending')">Pending (0)</button>
+                <button id="tab-approved" onclick="setTab('approved')">Approved (0)</button>
+            </div>
+            <div id="list"></div>
+        </div>
+
+        <div class="center" id="view-loading">Loading...</div>
+    </main>
+
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+    <script src="../js/config.js"></script>
+    <script>
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let rows = [];
+        let tab = 'pending';
+
+        function esc(t) { const d = document.createElement('div'); d.textContent = t == null ? '' : t; return d.innerHTML; }
+        function size(b) { if (!b) return 'size unknown'; return b < 1048576 ? Math.round(b / 1024) + 'KB' : (b / 1048576).toFixed(1) + 'MB'; }
+        function when(s) { return new Date(s).toLocaleString(); }
+        function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+
+        function view(name) {
+            ['login', 'denied', 'admin', 'loading'].forEach(v => document.getElementById('view-' + v).classList.toggle('hidden', v !== name));
+        }
+
+        async function signIn() {
+            await db.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + window.location.pathname } });
+        }
+
+        async function signOut() {
+            await db.auth.signOut();
+            document.getElementById('signout').classList.add('hidden');
+            view('login');
+        }
+
+        async function init() {
+            const { data } = await db.auth.getSession();
+            if (!data.session) { view('login'); return; }
+            document.getElementById('signout').classList.remove('hidden');
+
+            // Is this user an admin? (the database decides; this is just for the screen)
+            const check = await db.from('admins').select('user_id').eq('user_id', data.session.user.id).maybeSingle();
+            if (!check.data) { view('denied'); return; }
+
+            await load();
+            view('admin');
+        }
+
+        async function load() {
+            const res = await db.from('resources')
+                .select('id, course_code, course_title, level, file_path, file_size, uploader_name, approved, created_at, departments(name)')
+                .order('created_at', { ascending: false });
+            if (res.error) { console.error(res.error); toast('Could not load. Are you an admin?'); return; }
+            rows = res.data;
+            render();
+        }
+
+        function setTab(t) {
+            tab = t;
+            document.getElementById('tab-pending').classList.toggle('active', t === 'pending');
+            document.getElementById('tab-approved').classList.toggle('active', t === 'approved');
+            render();
+        }
+
+        function render() {
+            const pending = rows.filter(r => !r.approved);
+            const approved = rows.filter(r => r.approved);
+            document.getElementById('tab-pending').textContent = 'Pending (' + pending.length + ')';
+            document.getElementById('tab-approved').textContent = 'Approved (' + approved.length + ')';
+
+            const list = tab === 'pending' ? pending : approved;
+            const box = document.getElementById('list');
+
+            if (list.length === 0) {
+                box.innerHTML = '<div class="center">' + (tab === 'pending' ? 'Nothing waiting for review.' : 'No approved resources yet.') + '</div>';
+                return;
+            }
+
+            box.innerHTML = list.map(r => {
+                const link = r.file_path ? db.storage.from('resources').getPublicUrl(r.file_path).data.publicUrl : null;
+                return `
+        <div class="card">
+          <h3>${esc(r.course_code)} - ${esc(r.course_title)}</h3>
+          <p class="meta">${esc(r.departments ? r.departments.name : '')} • Level ${esc(r.level)} • ${size(r.file_size)}<br>
+            By ${esc(r.uploader_name || 'unknown')} • ${when(r.created_at)}</p>
+          <div class="actions">
+            ${link ? '<a href="' + link + '" target="_blank" rel="noopener">Preview PDF</a>' : '<span class="meta">No file</span>'}
+            ${tab === 'pending'
+                        ? '<button class="btn-green" onclick="approve(' + r.id + ', this)">Approve</button><button class="btn-red" onclick="remove(' + r.id + ', this)">Reject</button>'
+                        : '<button class="btn-red" onclick="remove(' + r.id + ', this)">Remove</button>'}
+          </div>
+        </div>`;
+            }).join('');
+        }
+
+        async function approve(id, btn) {
+            btn.disabled = true;
+            const res = await db.from('resources').update({ approved: true }).eq('id', id);
+            if (res.error) { console.error(res.error); toast('Approve failed.'); btn.disabled = false; return; }
+            toast('Approved.');
+            await load();
+        }
+
+        async function remove(id, btn) {
+            const r = rows.find(x => x.id === id);
+            if (!confirm('Delete "' + r.course_code + ' - ' + r.course_title + '" permanently?')) return;
+            btn.disabled = true;
+
+            // delete the file first, then the row
+            if (r.file_path) {
+                const f = await db.storage.from('resources').remove([r.file_path]);
+                if (f.error) { console.error(f.error); toast('Could not delete the file.'); btn.disabled = false; return; }
+            }
+            const res = await db.from('resources').delete().eq('id', id);
+            if (res.error) { console.error(res.error); toast('Delete failed.'); btn.disabled = false; return; }
+            toast('Deleted.');
+            await load();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
