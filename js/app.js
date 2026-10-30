@@ -84,7 +84,10 @@ function render() {
       <div class="pdf-badge"><span class="pdf-icon">PDF</span> PDF</div>
       <h3>${esc(r.course_code)} - ${esc(r.course_title)}.pdf</h3>
       <p class="resource-meta">${esc(r.departments.name)} • Level ${esc(r.level)} • Uploaded ${timeAgo(r.created_at)} • ${formatSize(r.file_size)}</p>
-      <button class="btn" onclick="download(${r.id})">Download</button>
+      <div class="card-actions">
+        <button class="btn btn-light" onclick="viewFile(${r.id})">View</button>
+        <button class="btn" onclick="download(${r.id})">Download</button>
+      </div>
     </article>
   `).join('');
 
@@ -131,10 +134,21 @@ function clearFilter() {
   render();
 }
 
-// ===== Download (increments count & opens file) =====
+// ===== View (opens file in a new tab, no download count) =====
+function viewFile(id) {
+  const r = allResources.find(item => item.id === id);
+  if (!r || !r.file_path) {
+    showToast('This file has not been uploaded yet.');
+    return;
+  }
+  const result = db.storage.from('resources').getPublicUrl(r.file_path);
+  window.open(result.data.publicUrl, '_blank');
+}
+
+// ===== Download (increments count & forces a real download) =====
 async function download(id) {
   const r = allResources.find(item => item.id === id);
-  if (!r.file_path) {
+  if (!r || !r.file_path) {
     showToast('This file has not been uploaded yet.');
     return;
   }
@@ -145,9 +159,17 @@ async function download(id) {
     console.error('Could not update download count:', error);
   }
 
-  // 2. Fetch the public URL and open it
-  const result = db.storage.from('resources').getPublicUrl(r.file_path);
-  window.open(result.data.publicUrl, '_blank');
+  // 2. Get a URL that tells the browser to save the file instead of opening it
+  const fileName = `${r.course_code} - ${r.course_title}.pdf`.replace(/[\\/:*?"<>|]/g, '');
+  const result = db.storage.from('resources').getPublicUrl(r.file_path, { download: fileName });
+
+  const a = document.createElement('a');
+  a.href = result.data.publicUrl;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('Download started.');
 }
 
 // ===== Login =====
