@@ -3,7 +3,13 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== State =====
 let allResources = [];    // approved resources from the database
-let departments = [];     // [{id, name}]
+let departments = [];     // [{id, name, faculty}]
+
+const FACULTY_ORDER = [
+  'Faculty of Computing & Information Systems',
+  'Faculty of Engineering',
+  'GCTU Business School'
+];
 let selectedDept = 'ALL';
 let currentProfile = null; // the logged-in student's profile (name + index number)
 
@@ -47,9 +53,10 @@ function timeAgo(dateString) {
 async function loadData() {
   grid.innerHTML = '<p class="empty" style="display:block">Loading...</p>';
 
-  const deptRes = await db.from('departments').select('id, name').order('id');
+  const deptRes = await db.from('departments').select('id, name, faculty').order('id');
   if (deptRes.error) { showError(deptRes.error); return; }
   departments = deptRes.data;
+  buildDepartments();
 
   const resRes = await db
     .from('resources')
@@ -103,22 +110,52 @@ function render() {
   const deptCounts = {};
   allResources.forEach(r => {
     const dName = r.departments?.name;
-    if (dName) {
-      deptCounts[dName] = (deptCounts[dName] || 0) + 1;
-    }
+    if (dName) deptCounts[dName] = (deptCounts[dName] || 0) + 1;
   });
 
   document.querySelectorAll('.dept-card').forEach(card => {
-    const deptName = card.dataset.dept;
-    const count = deptCounts[deptName] || 0;
-    const pTag = card.querySelector('p');
-
-    if (count > 0) {
-      pTag.textContent = `${count} resource${count === 1 ? '' : 's'} • L100-L400`;
-    } else {
-      pTag.textContent = 'Coming soon • L100-L400';
-    }
+    const count = deptCounts[card.dataset.dept] || 0;
+    card.querySelector('p').textContent =
+      count > 0 ? `${count} resource${count === 1 ? '' : 's'}` : 'Coming soon';
   });
+
+  document.querySelectorAll('.faculty-group').forEach(group => {
+    let total = 0;
+    group.querySelectorAll('.dept-card').forEach(c => { total += deptCounts[c.dataset.dept] || 0; });
+    group.querySelector('.faculty-count').textContent = total > 0 ? `${total} resource${total === 1 ? '' : 's'}` : '';
+    // Keep the faculty open when one of its programmes is selected
+    if (group.querySelector('.dept-card.active')) group.open = true;
+  });
+}
+
+// ===== Build faculty groups + upload dropdown from the departments table =====
+function buildDepartments() {
+  const byFaculty = {};
+  departments.forEach(d => {
+    const f = d.faculty || 'Other';
+    (byFaculty[f] = byFaculty[f] || []).push(d);
+  });
+  const faculties = [
+    ...FACULTY_ORDER.filter(f => byFaculty[f]),
+    ...Object.keys(byFaculty).filter(f => !FACULTY_ORDER.includes(f))
+  ];
+
+  document.getElementById('dept-container').innerHTML = faculties.map(f => `
+    <details class="faculty-group">
+      <summary><span class="faculty-name">${esc(f)}</span><span class="faculty-count"></span></summary>
+      <div class="dept-grid">
+        ${byFaculty[f].map(d => `
+          <button class="dept-card" data-dept="${esc(d.name)}" onclick="filterByDept(this.dataset.dept)">
+            <h3>${esc(d.name)}</h3>
+            <p>Coming soon</p>
+          </button>`).join('')}
+      </div>
+    </details>`).join('');
+
+  document.getElementById('up-dept').innerHTML = faculties.map(f => `
+    <optgroup label="${esc(f)}">
+      ${byFaculty[f].map(d => `<option>${esc(d.name)}</option>`).join('')}
+    </optgroup>`).join('');
 }
 
 // ===== Filters =====
