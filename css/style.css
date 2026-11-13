@@ -204,7 +204,7 @@ button {
 .dept-card {
   background: var(--white);
   border-radius: var(--radius);
-  padding: 20px 12px;
+  padding: 16px 12px;
   text-align: center;
   box-shadow: var(--shadow);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -236,7 +236,7 @@ button {
 }
 
 .dept-card h3 {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: var(--navy);
 }
 
@@ -507,4 +507,50 @@ button {
   font-size: 0.85rem;
   color: var(--muted);
   margin-bottom: 14px;
+}
+
+
+/* ===== Faculty groups ===== */
+.faculty-group {
+  margin-bottom: 14px;
+}
+
+.faculty-group summary {
+  cursor: pointer;
+  list-style: none;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.faculty-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.faculty-group summary::after {
+  content: '+';
+  font-size: 1.4rem;
+  color: var(--blue);
+  margin-left: auto;
+}
+
+.faculty-group[open] summary::after {
+  content: '\2212';
+}
+
+.faculty-group .dept-grid {
+  margin-top: 14px;
+}
+
+.faculty-count {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
 }
