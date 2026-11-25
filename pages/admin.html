@@ -311,7 +311,7 @@
             <span class="dl-badge">📥 ${dlCount} download${dlCount === 1 ? '' : 's'}</span>
           </p>
           <div class="actions">
-            ${link ? '<a href="' + link + '" target="_blank" rel="noopener">Preview PDF</a>' : '<span class="meta">No file</span>'}
+            ${link ? '<a href="' + link + '" target="_blank" rel="noopener">Preview file</a>' : '<span class="meta">No file</span>'}
             ${tab === 'pending'
                         ? '<button class="btn-green" onclick="approve(' + r.id + ', this)">Approve</button><button class="btn-red" onclick="remove(' + r.id + ', this)">Reject</button>'
                         : '<button class="btn-red" onclick="remove(' + r.id + ', this)">Remove</button>'}
