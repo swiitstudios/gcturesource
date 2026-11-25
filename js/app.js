@@ -28,6 +28,18 @@ function esc(text) {
   return div.innerHTML;
 }
 
+// ===== File types (PDF + PowerPoint) =====
+const ALLOWED_EXT = {
+  pdf:  { label: 'PDF', mime: 'application/pdf', color: '#e5503f' },
+  ppt:  { label: 'PPT', mime: 'application/vnd.ms-powerpoint', color: '#d35230' },
+  pptx: { label: 'PPT', mime: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', color: '#d35230' }
+};
+
+function getExt(name) {
+  const m = /\.([a-z0-9]+)$/i.exec(name || '');
+  return m ? m[1].toLowerCase() : 'pdf';
+}
+
 function show(id) { document.getElementById(id).classList.add('open'); }
 function hide(id) { document.getElementById(id).classList.remove('open'); }
 
@@ -86,17 +98,21 @@ function render() {
     return matchesText && matchesDept;
   });
 
-  grid.innerHTML = list.map(r => `
+  grid.innerHTML = list.map(r => {
+    const ext = getExt(r.file_path);
+    const t = ALLOWED_EXT[ext] || ALLOWED_EXT.pdf;
+    return `
     <article class="resource-card">
-      <div class="pdf-badge"><span class="pdf-icon">PDF</span> PDF</div>
-      <h3>${esc(r.course_code)} - ${esc(r.course_title)}.pdf</h3>
+      <div class="pdf-badge"><span class="pdf-icon" style="background:${t.color}">${t.label}</span> ${t.label}</div>
+      <h3>${esc(r.course_code)} - ${esc(r.course_title)}.${esc(ext)}</h3>
       <p class="resource-meta">${esc(r.departments.name)} • Level ${esc(r.level)} • Uploaded ${timeAgo(r.created_at)} • ${formatSize(r.file_size)}</p>
       <div class="card-actions">
         <button class="btn btn-light" onclick="viewFile(${r.id})">View</button>
         <button class="btn" onclick="download(${r.id})">Download</button>
       </div>
     </article>
-  `).join('');
+  `;
+  }).join('');
 
   emptyMsg.textContent = 'No resources found. Try another search.';
   emptyMsg.style.display = list.length === 0 ? 'block' : 'none';
@@ -178,8 +194,14 @@ function viewFile(id) {
     showToast('This file has not been uploaded yet.');
     return;
   }
-  const result = db.storage.from('resources').getPublicUrl(r.file_path);
-  window.open(result.data.publicUrl, '_blank');
+  const url = db.storage.from('resources').getPublicUrl(r.file_path).data.publicUrl;
+  const ext = getExt(r.file_path);
+  if (ext === 'ppt' || ext === 'pptx') {
+    // Browsers can't show PowerPoint files, so use Microsoft's online viewer
+    window.open('https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(url), '_blank');
+  } else {
+    window.open(url, '_blank');
+  }
 }
 
 // ===== Download (increments count & forces a real download) =====
@@ -197,7 +219,7 @@ async function download(id) {
   }
 
   // 2. Get a URL that tells the browser to save the file instead of opening it
-  const fileName = `${r.course_code} - ${r.course_title}.pdf`.replace(/[\\/:*?"<>|]/g, '');
+  const fileName = `${r.course_code} - ${r.course_title}.${getExt(r.file_path)}`.replace(/[\\/:*?"<>|]/g, '');
   const result = db.storage.from('resources').getPublicUrl(r.file_path, { download: fileName });
 
   const a = document.createElement('a');
@@ -318,7 +340,8 @@ async function handleUpload(event) {
 
   const file = document.getElementById('up-file').files[0];
   if (!file) return;
-  if (file.type !== 'application/pdf') { showToast('Please choose a PDF file.'); return; }
+  const ext = getExt(file.name);
+  if (!ALLOWED_EXT[ext] || !/\.(pdf|pptx?)$/i.test(file.name)) { showToast('Please choose a PDF or PowerPoint file.'); return; }
   if (file.size > 25 * 1024 * 1024) { showToast('File is too large (max 25MB).'); return; }
 
   const deptName = document.getElementById('up-dept').value;
@@ -330,7 +353,7 @@ async function handleUpload(event) {
   // 1. Upload the file to storage
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
   const filePath = Date.now() + '-' + safeName;
-  const up = await db.storage.from('resources').upload(filePath, file, { contentType: 'application/pdf' });
+  const up = await db.storage.from('resources').upload(filePath, file, { contentType: ALLOWED_EXT[ext].mime });
 
   if (up.error) {
     console.error(up.error);
